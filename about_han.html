@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私密记事本</title>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --bg-color: #f5f7fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* 登录容器 */
+        #login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        input[type="password"] {
+            padding: 12px;
+            font-size: 18px;
+            width: 150px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s;
+            text-align: center;
+            letter-spacing: 5px;
+        }
+
+        input[type="password"]:focus {
+            border-color: var(--primary-color);
+        }
+
+        button {
+            margin-top: 15px;
+            padding: 10px 25px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* 记事本容器 */
+        #main-content {
+            display: none; /* 初始隐藏 */
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            flex-direction: column;
+        }
+
+        textarea {
+            flex-grow: 1;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            line-height: 1.6;
+            resize: none;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            font-size: 12px;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="login-container">
+        <h2>请输入访问密码</h2>
+        <input type="password" id="passwordInput" maxlength="4" placeholder="****">
+        <br>
+        <button onclick="checkPassword()">进入系统</button>
+        <p id="error-msg" style="color: red; font-size: 14px; margin-top: 10px;"></p>
+    </div>
+
+    <div id="main-content">
+        <div class="header">
+            <h3>我的随手记</h3>
+            <span id="saveStatus" class="status">已自动保存</span>
+            <button onclick="logout()" style="background: #ff4757; margin: 0;">退出</button>
+        </div>
+        <textarea id="noteArea" placeholder="在此处开始输入你的内容...内容会自动保存。"></textarea>
+    </div>
+
+    <script>
+        const CORRECT_PASSWORD = "2026"; // 这里修改你的四位数密码
+
+        // 检查密码
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('error-msg');
+            
+            if (input === CORRECT_PASSWORD) {
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('main-content').style.display = 'flex';
+                loadNote();
+            } else {
+                errorMsg.innerText = "密码错误，请重试";
+                document.getElementById('passwordInput').value = "";
+            }
+        }
+
+        // 监听回车键登录
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkPassword();
+        });
+
+        // 自动保存逻辑
+        const noteArea = document.getElementById('noteArea');
+        const saveStatus = document.getElementById('saveStatus');
+
+        noteArea.addEventListener('input', () => {
+            saveStatus.innerText = "正在输入...";
+            localStorage.setItem('savedNote', noteArea.value);
+            
+            // 模拟保存延迟感
+            setTimeout(() => {
+                saveStatus.innerText = "已自动保存";
+            }, 800);
+        });
+
+        // 加载内容
+        function loadNote() {
+            const savedData 
